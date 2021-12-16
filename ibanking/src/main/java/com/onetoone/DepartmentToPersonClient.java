@@ -4,7 +4,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
-
+//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
 public class DepartmentToPersonClient {
 
 	EntityManagerFactory emf = null;

@@ -1,0 +1,448 @@
+JPA Tutorial
+JPA tutorial provides basic and advanced concepts of Java Persistence API. 
+Our JPA tutorial is designed for beginners and professionals.
+
+JPA is just a specification that facilitates object-relational mapping to manage relational 
+data in Java applications. It provides a platform to work directly with objects instead of 
+using SQL statements.
+
+JPA Object Relational Mapping
+Object Relational Mapping (ORM) is a functionality which is used to develop and maintain a 
+relationship between an object and relational database by mapping an object state to database column. It is capable to handle various database operations easily such as inserting, 
+updating, deleting etc.
+
+Mapping Directions
+Mapping Directions are divided into two parts: -
+
+Unidirectional relationship - In this relationship, only one entity can refer the properties
+to another. It contains only one owing side that specifies how an update can be made in the database.
+
+Bidirectional relationship - This relationship contains an owning side as well as 
+an inverse side. So here every entity has a relationship field or refer the property to 
+other entity.
+
+
+Following are the various ORM mappings: -
+
+One-to-one - This association is represented by @OneToOne annotation. Here, instance of each entity is related to a single instance of another entity.
+One-to-many - This association is represented by @OneToMany annotation. In this relationship, an instance of one entity can be related to more than one instance of another entity.
+Many-to-one - This mapping is defined by @ManyToOne annotation. In this relationship, multiple instances of an entity can be related to single instance of another entity.
+Many-to-many - This association is represented by @ManyToMany annotation. Here, multiple instances of an entity can be related to multiple instances of another entity. In this mapping, any side can be the owing side.
+
+
+@Entity - This is a marker annotation which indicates that this class is an entity. This annotation must be placed on the class name.
+@Id - This annotation is placed on a specific field that holds the persistent identifying properties. This field is treated as a primary key in database.
+Simple Entity Class
+import javax.persistence.*;  
+@Entity  
+public class Student {  
+    @Id  
+    private int id;  
+    private String name;  
+    private long fees;  
+    public Student() {}  
+    public Student(int id)   
+     {  
+        this.id = id;  
+         }  
+    public int getId()   
+     {  
+        return id;  
+         }  
+    public void setId(int id)   
+     {  
+        this.id = id;  
+         }  
+    public String getName()  
+     {  
+        return name;   
+         }  
+    public void setName(String name)   
+     {  
+        this.name = name;  
+         }  
+    public long getFees()  
+     {  
+        return fees;  
+         }  
+    public void setFees (long fees)  
+     {  
+        this.fees = fees;  
+     }   
+}  
+
+
+
+
+
+Steps to persist an entity object.
+1) Creating an entity manager factory object
+
+The EntityManagerFactory interface present in java.persistence package is used to provide an entity manager.
+
+EntityManagerFactory emf=Persistence.createEntityManagerFactory("Student_details");  
+Persistence - The Persistence is a bootstrap class which is used to obtain an EntityManagerFactory interface.
+createEntityManagerFactory() method - The role of this method is to create and return an EntityManagerFactory for the named persistence unit. Thus, this method contains the name of persistence unit passed in the Persistence.xml file.
+2) Obtaining an entity manager from factory.
+
+EntityManager em=emf.createEntityManager();  
+EntityManager - An EntityManager is an interface
+createEntityManager() method - It creates new application-managed EntityManager
+3) Intializing an entity manager.
+
+em.getTransaction().begin();  
+getTransaction() method - This method returns the resource-level EntityTransaction object.
+begin() method - This method is used to start the transaction.
+4) Persisting a data into relational database.
+
+em.persist(s1);  
+persist() - This method is used to make an instance managed and persistent. An entity instance is passed within this method.
+5) Closing the transaction
+
+em.getTransaction().commit();  
+6) Releasing the factory resources.
+
+emf.close();  
+    em.close();  
+close() - This method is used to releasing the factory resources.
+
+
+
+
+
+Inserting an Entity
+In JPA, we can easily insert data into database through entities. The EntityManager provides persist() method to insert records.
+
+JPA Entity Insertion Example
+Here, we will insert the record of students.
+
+This example contains the following steps: -
+
+Create an entity class named as StudentEntity.java under com.javatpoint.jpa.student package that contains attributes s_id, s_name, s_age.
+StudentEntity.java
+
+package com.javatpoint.jpa.student;  
+import javax.persistence.*;  
+  
+@Entity  
+@Table(name="student")  
+public class StudentEntity {  
+  
+    @Id  
+    private int s_id;  
+    private String s_name;  
+    private int s_age;  
+      
+    public StudentEntity(int s_id, String s_name, int s_age) {  
+        super();  
+        this.s_id = s_id;  
+        this.s_name = s_name;  
+        this.s_age = s_age;  
+    }  
+  
+    public StudentEntity() {  
+        super();  
+    }  
+  
+    public int getS_id() {  
+        return s_id;  
+    }  
+  
+    public void setS_id(int s_id) {  
+        this.s_id = s_id;  
+    }  
+  
+    public String getS_name() {  
+        return s_name;  
+    }  
+  
+    public void setS_name(String s_name) {  
+        this.s_name = s_name;  
+    }  
+  
+    public int getS_age() {  
+        return s_age;  
+    }  
+  
+    public void setS_age(int s_age) {  
+        this.s_age = s_age;  
+    }  
+      
+}  
+Now, map the entity class and other databases confiuguration in Persistence.xml file.
+Persistence.xml
+
+<persistence>  
+<persistence-unit name="Student_details">  
+      
+    <class>com.javatpoint.jpa.student.StudentEntity</class>  
+  
+<properties>  
+<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>  
+<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/studentdata"/>  
+<property name="javax.persistence.jdbc.user" value="root"/>  
+<property name="javax.persistence.jdbc.password" value=""/>  
+<property name="eclipselink.logging.level" value="SEVERE"/>  
+<property name="eclipselink.ddl-generation" value="create-or-extend-tables"/>  
+</properties>  
+  
+    </persistence-unit>  
+</persistence>  
+
+Create a persistence class named as PersistStudent.java under com.javatpoint.jpa.persist package to persist the entity object with data.
+PersistStudent.java
+
+
+import javax.persistence.*;  
+public class PersistStudent {  
+      
+    public static void main(String args[])  
+    {  
+          
+        EntityManagerFactory emf=Persistence.createEntityManagerFactory("Student_details");  
+        EntityManager em=emf.createEntityManager();  
+          
+em.getTransaction().begin();  
+          
+        StudentEntity s1=new StudentEntity();  
+        s1.setS_id(101);  
+        s1.setS_name("Gaurav");  
+        s1.setS_age(24);  
+          
+        StudentEntity s2=new StudentEntity();  
+        s2.setS_id(102);  
+        s2.setS_name("Ronit");  
+        s2.setS_age(22);  
+          
+        StudentEntity s3=new StudentEntity();  
+        s3.setS_id(103);  
+        s3.setS_name("Rahul");  
+        s3.setS_age(26);  
+          
+        em.persist(s1);  
+        em.persist(s2);  
+        em.persist(s3);       
+  
+em.getTransaction().commit();  
+          
+        emf.close();  
+        em.close();  
+          
+    }  
+}  
+Output:
+
+After the execution of the program, the student table is generated under MySQL workbench.
+This table contains the student details.To fetch data, run select * from student query in MySQL.
+
+Finding an entity
+To find an entity, EntityManger interface provides find() method that searches an element on the basis of primary key.
+StudentEntity s=em.find(StudentEntity.class,101);  
+
+
+Update an Entity
+JPA allows us to change the records in database by updating an entity.
+StudentEntity s=em.find(StudentEntity.class,102);  
+
+
+Deleting an Entity
+To delete a record from database, EntityManager interface provides remove() method. 
+The remove() method uses primary key to delete the particular record.
+
+    StudentEntity s=em.find(StudentEntity.class,102);  
+em.remove(s);  
+
+
+
+JPA JPQL Introduction
+The JPQL (Java Persistence Query Language) is an object-oriented query language which is used to perform database operations on persistent entities. Instead of database table, JPQL uses entity object model to operate the SQL queries. Here, the role of JPA is to transform JPQL into SQL. Thus, it provides an easy platform for developers to handle SQL tasks.
+
+JPQL is an extension of Entity JavaBeans Query Language (EJBQL), adding the following important features to it: -
+
+It can perform join operations.
+It can update and delete data in a bulk.
+It can perform aggregate function with sorting and grouping clauses.
+Single and multiple value result types.
+JPQL Features
+It is a platform-independent query language.
+It is simple and robust.
+It can be used with any type of database such as MySQL, Oracle.
+JPQL queries can be declared statically into metadata or can also be dynamically built in code.
+Creating Queries in JPQL
+JPQL provides two methods that can be used to access database records. These methods are: -
+
+Query createQuery(String name) - The createQuery() method of EntityManager interface is used to create an instance of Query interface for executing JPQL statement.
+Query query = em.createQuery("Select s.s_name from StudentEntity s");  
+This method creates dynamic queries that can be defined within business logic.
+
+Query createNamedQuery(String name) - The createNamedQuery() method of EntityManager interface is used to create an instance of Query interface for executing named queries.
+@NamedQuery(name = "find name" , query = "Select s from StudentEntity s")  
+This method is used to create static queries that can be defined in entity class.
+
+Now, we can control the execution of query by the following Query interface methods: -
+
+int executeUpdate() - This method executes the update and delete operation.
+int getFirstResult() - This method returns the first positioned result the query object was set to retrieve.
+int getMaxResults() - This method returns the maximum number of results the query object was set to retrieve.
+java.util.List getResultList() - This method returns the list of results as an untyped list.
+Query setFirstResult(int startPosition) - This method assigns the position of first result to retrieve.
+Query setMaxResults(int maxResult) - This method assigns the maximum numbers of result to retrieve.
+
+
+
+Inheritance Strategies
+Inheritance is the core concept of object oriented language, therefore we can use inheritance relationships or strategies between
+ entities. JPA support three types of inheritance strategies such as SINGLE_TABLE, JOINED_TABLE, and TABLE_PER_CONCRETE_CLASS.
+
+
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
+
+@Entity
+@Table
+@Inheritance( strategy = InheritanceType.SINGLE_TABLE )
+@DiscriminatorColumn( name = "type" )
+
+public class Staff implements Serializable {
+   @Id
+   @GeneratedValue( strategy = GenerationType.AUTO )
+   
+   private int sid;
+   private String sname;
+   
+   public Staff( int sid, String sname ) {
+      super( );
+      this.sid = sid;
+      this.sname = sname;
+   }
+   
+   public Staff( ) {
+      super( );
+   }
+   
+   public int getSid( ) {
+      return sid;
+   }
+   
+   public void setSid( int sid ) {
+      this.sid = sid;
+   }
+   
+   public String getSname( ) {
+      return sname;
+   }
+   
+   public void setSname( String sname ) {
+      this.sname = sname;
+   }
+}
+In the above code @DescriminatorColumn specifies the field name (type) and the values of it shows the remaining (Teaching and NonTeachingStaff) fields.
+
+Create a subclass (class) to Staff class named TeachingStaff.java under the com.tutorialspoint.eclipselink.entity package. The TeachingStaff Entity class is shown as follows:
+
+package com.tutorialspoint.eclipselink.entity;
+
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
+@Entity
+@DiscriminatorValue( value="TS" )
+public class TeachingStaff extends Staff {
+
+   private String qualification;
+   private String subjectexpertise;
+
+   public TeachingStaff( int sid, String sname, 
+   
+   String qualification,String subjectexpertise ) {
+      super( sid, sname );
+      this.qualification = qualification;
+      this.subjectexpertise = subjectexpertise;
+   }
+
+   public TeachingStaff( ) {
+      super( );
+   }
+
+   public String getQualification( ){
+      return qualification;
+   }
+
+   public void setQualification( String qualification ){
+      this.qualification = qualification;
+   }
+
+   public String getSubjectexpertise( ) {
+      return subjectexpertise;
+   }
+
+   public void setSubjectexpertise( String subjectexpertise ){
+      this.subjectexpertise = subjectexpertise;
+   }
+}
+Create a subclass (class) to Staff class named NonTeachingStaff.java under the com.tutorialspoint.eclipselink.entity package. The NonTeachingStaff Entity class is shown as follows:
+
+package com.tutorialspoint.eclipselink.entity;
+
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
+@Entity
+@DiscriminatorValue( value = "NS" )
+
+public class NonTeachingStaff extends Staff {
+   private String areaexpertise;
+
+   public NonTeachingStaff( int sid, String sname, String areaexpertise ) {
+      super( sid, sname );
+      this.areaexpertise = areaexpertise;
+   }
+
+   public NonTeachingStaff( ) {
+      super( );
+   }
+
+   public String getAreaexpertise( ) {
+      return areaexpertise;
+   }
+
+   public void setAreaexpertise( String areaexpertise ){
+      this.areaexpertise = areaexpertise;
+   }
+}
+
+
+
+History of criteria API
+The criteria API is included into all versions of JPA therefore each step of criteria API is notified in the specifications of JPA.
+
+In JPA 2.0, the criteria query API, standardization of queries are developed.
+In JPA 2.1, Criteria update and delete (bulk update and delete) are included.
+Criteria Query Structure
+The Criteria API and the JPQL are closely related and are allowed to design using similar operators in their queries. It follows javax.persistence.criteria package to design a query. The query structure means the syntax criteria query.
+
+The following simple criteria query returns all instances of the entity class in the data source.
+
+EntityManager em = ...;
+CriteriaBuilder cb = em.getCriteriaBuilder();
+
+CriteriaQuery<Entity class> cq = cb.createQuery(Entity.class);
+Root<Entity> from = cq.from(Entity.class);
+
+cq.select(Entity);
+TypedQuery<Entity> q = em.createQuery(cq);
+List<Entity> allitems = q.getResultList();
+
+
+
+
+
+
+
+

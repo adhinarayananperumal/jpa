@@ -1,0 +1,640 @@
+https://howtodoinjava.com/java-8-tutorial/
+https://javabydeveloper.com/java-optional-class-with-examples/
+
+Java 8 concepts covered
+	functional interface
+	lambda expression
+	method reference
+	java.util.function - built in interface -  Predicate , Supplier , Consumer , BiConsumer etc
+	Stream API
+	optional Class
+	date and time
+
+
+
+Functional Interfaces
+
+Functional interfaces are also called Single Abstract Method interfaces (SAM Interfaces). 
+As the name suggests, a functional interface permits exactly one abstract method in it.
+
+Java 8 introduces @FunctionalInterface annotation that we can use for giving compile-time errors 
+it a functional interface violates the contracts.
+
+Functional Interface Example
+//Optional annotation
+@FunctionalInterface
+public interface Ticket{
+    public int calculateTicketAmount();
+}
+
+Please note that a functional interface is valid even if the @FunctionalInterface annotation is omitted.
+It is only for informing the compiler to enforce a single abstract method inside the interface.
+
+Also, since default methods are not abstract , we can add default methods to the functional interface as many as we need.
+
+Another critical point to remember is that if a functional interface overrides one of the public methods of java.lang.Object, 
+that also does not count toward the interface’s abstract method count since any implementation of the interface 
+will have an implementation from java.lang.Object or elsewhere.
+
+For example, given below is a perfectly valid functional interface.
+
+@FunctionalInterface
+public interface MyFirstFunctionalInterface 
+{
+    public void firstWork();
+ 
+    @Override
+    public String toString();                //Overridden from Object class
+ 
+    @Override
+    public boolean equals(Object obj);        //Overridden from Object class
+}
+
+
+
+Lambda Expressions
+	Lambda expressions are known to many of us who have worked on other popular programming languages like Scala.
+        In Java programming language, a Lambda expression (or function) is just an anonymous function, i.e., 
+        a function with no name and without being bound to an identifier.
+
+        Lambda expressions are written precisely where it’s needed, typically as a parameter to some other function.
+
+Syntax
+A few basic syntaxes of lambda expressions are:
+
+(parameters) -> expression
+ 
+(parameters) -> { statements; }
+ 
+() -> expression
+A typical lambda expression example will be like this:
+
+//This function takes two parameters and return their sum
+(x, y) -> x + y  
+Please note that based on the type of x and y, we may use the method in multiple places. Parameters can match to int, or Integer or simply String also. Based on context, it will either add two integers or concatenate two strings.
+
+Rules for writing lambda expressions
+A lambda expression can have zero, one or more parameters.
+The type of the parameters can be explicitly declared or it can be inferred from the context.
+Multiple parameters are enclosed in mandatory parentheses and separated by commas.
+Empty parentheses are used to represent an empty set of parameters.
+When there is a single parameter, if its type is inferred, it is not mandatory to use parentheses.
+The body of the lambda expressions can contain zero, one, or more statements.
+If the body of lambda expression has a single statement, curly brackets are not mandatory and the return type of 
+the anonymous function is the same as that of the body expression. When there is more than one statement in the body
+then these must be enclosed in curly brackets.
+
+
+Method reference
+	Method reference is a shorthand notation of a lambda expression to call a method. For example:
+	If your lambda expression is like this:
+
+str -> System.out.println(str)
+then you can replace it with a method reference like this:
+
+System.out::println
+The :: operator is used in method reference to separate the class or object from the method name
+(we will learn this with the help of examples).
+
+Four types of method references
+1. Method reference to an instance method of an object – object::instanceMethod
+2. Method reference to a static method of a class – Class::staticMethod
+3. Method reference to an instance method of an arbitrary object of a particular type – Class::instanceMethod
+4. Method reference to a constructor – Class::new
+
+
+1. Method reference to an instance method of an object
+@FunctionalInterface 
+interface MyInterface{  
+    void display();  
+}  
+public class Example {  
+    public void myMethod(){  
+	System.out.println("Instance Method");  
+    }  
+    public static void main(String[] args) {  
+	Example obj = new Example();   
+	// Method reference using the object of the class
+	MyInterface ref = obj::myMethod;  
+	// Calling the method of functional interface  
+	ref.display();  
+    }  
+}
+Output:
+
+Instance Method
+
+
+2. Method reference to a static method of a class
+import java.util.function.BiFunction;  
+class Multiplication{  
+   public static int multiply(int a, int b){  
+	return a*b;  
+   }  
+}  
+public class Example {  
+   public static void main(String[] args) {  
+	BiFunction<Integer, Integer, Integer> product = Multiplication::multiply;  
+	int pr = product.apply(11, 5);  
+	System.out.println("Product of given number is: "+pr);  
+   }  
+}
+Output:
+
+Product of given number is: 55
+
+3. Method reference to an instance method of an arbitrary object of a particular type
+import java.util.Arrays;
+public class Example {  
+
+   public static void main(String[] args) {  
+	String[] stringArray = { "Steve", "Rick", "Aditya", "Negan", "Lucy", "Sansa", "Jon"};
+	/* Method reference to an instance method of an arbitrary 
+	 * object of a particular type
+	 */
+	Arrays.sort(stringArray, String::compareToIgnoreCase);
+	for(String str: stringArray){
+		System.out.println(str);
+	}
+   }  
+}
+Output:
+
+Aditya
+Jon
+Lucy
+Negan
+Rick
+Sansa
+Steve
+
+
+4. Method reference to a constructor
+@FunctionalInterface 
+interface MyInterface{  
+    Hello display(String say);  
+}  
+class Hello{  
+    public Hello(String say){  
+        System.out.print(say);  
+    }  
+}  
+public class Example {  
+    public static void main(String[] args) { 
+    	//Method reference to a constructor
+        MyInterface ref = Hello::new;  
+        ref.display("Hello World!");  
+    }  
+}
+Output:
+
+Hello World!
+
+
+Optional
+What is java Optional?
+Java Optional class provides a way to deal with null values. 
+It is used to represent a value is present or not. 
+Java 8 added a new class Optional available in java.util package.
+
+A NullpointerException is a common issue in java applications. 
+To prevent this, we normally add frequent NULL checks in our code to check
+if a variable is not empty before we use it in our program. 
+Optional provides a better approach to handle such situations. 
+Let us explore this by construct with some use cases.
+
+
+https://javabydeveloper.com/java-optional-class-with-examples/
+
+String version = computer.getSoundcard().getUSB().getVersion();
+
+String version = "UNKNOWN";
+if(computer != null){
+  Soundcard soundcard = computer.getSoundcard();
+  if(soundcard != null){
+    USB usb = soundcard.getUSB();
+    if(usb != null){
+      version = usb.getVersion();
+    }
+  }
+}
+
+String version = computer.map(Computer::getSoundcard)
+                  .map(Soundcard::getUSB)
+                  .map(USB::getVersion)
+                  .orElse("UNKNOWN");
+
+
+public class Computer {
+  private Optional<Soundcard> soundcard;  
+  public Optional<Soundcard> getSoundcard() { ... }
+  ...
+}
+
+public class Soundcard {
+  private Optional<USB> usb;
+  public Optional<USB> getUSB() { ... }
+
+}
+
+public class USB{
+  public String getVersion(){ ... }
+}
+
+
+Ways Create Java Optional Object
+
+public class CreateOptionalObjectDemo {
+  public static void main(String[] args) {
+    
+    Optional.empty() returns an empty Optional.
+     
+
+    Optional emptyOptional = Optional.empty();
+
+    
+     Optional.of("Peter") returns non empty Optional.
+     If value is null, will get NPE
+     
+    Optional nonEmptyOptional = Optional.of("Peter");
+    
+    Optional.ofNullable("Peter") returns non empty Optional.
+    If value is null, will get Optional.empty()
+     
+    Optional nonEmptyOrEmptyOptional1 = Optional.ofNullable("Peter");
+    Optional nonEmptyOrEmptyOptional2 = Optional.ofNullable(null);
+    
+    System.out.println(emptyOptional);
+    System.out.println(nonEmptyOptional);
+    System.out.println(nonEmptyOrEmptyOptional1);
+    System.out.println(nonEmptyOrEmptyOptional2);
+  }
+}
+
+Optional.empty
+Optional[Peter]
+Optional[Peter]
+Optional.empty
+
+Java Optional class methods
+
+static  Optional empty() – Returns an empty Optional instance.
+
+Optional<T> filter(Predicate<? super T> predicate)– If a value is present, and the value matches the given predicate, return an Optional describing the value, otherwise return an empty Optional.
+ 
+Optional flatMap(Function<? super T,Optional> mapper) – If a value is present, apply the provided Optional-bearing
+mapping function to it, return that result, otherwise return an emptyOptional.
+
+T get()– If a value is present in this Optional, returns the value, otherwise throws NoSuchElementException.
+
+void ifPresent(Consumer<? super T> consumer) – If a value is present, invoke the specified consumer with the value, otherwise do nothing.
+
+boolean	isPresent()– Return true if there is a value present, otherwise false.
+
+Optional map(Function<? super T,? extends U> mapper) – If a value is present, apply the provided mapping function to it, and if the result is non-null, return an Optional describing the result.
+
+static  Optional of(T value)– Returns an Optional with the specified present non-null value.
+
+static  Optional ofNullable(T value) – Returns an Optional describing the specified value, if non-null, otherwise returns an empty Optional.
+
+T orElse(T other)– Return the value if present, otherwise return other.
+
+T orElseGet(Supplier<? extends T> other) – Return the value if present, otherwise invoke other and return the result of that invocation.
+
+Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) – Return the contained value, if present, otherwise throw an exception to be created by the provided supplier.
+
+Optional.empty
+public class OptionalTest1 {
+ 
+    public static void main(String[] args) {
+        
+        //empty() - returns a empty Optional
+        /*---------------------------------------------------*/
+        Optional<String> emptyOptional = Optional.empty();
+        System.out.println(emptyOptional);//Optional.empty
+        
+    }
+}
+Output :
+
+Optional.empty
+Optional[Peter]
+Optional.empty
+
+
+Optional.of
+
+public class OptionalOfDemo {
+  public static void main(String[] args) {
+    // of() - returns a non-empty Optional with value
+    /*-------------------------------------------------------*/
+    Optional nonEmptyOptional = Optional.of("Peter");
+    System.out.println(nonEmptyOptional);// Optional[Peter]
+    System.out.println(Optional.of(null)); //NPE
+  }
+}
+Output :
+
+Optional[Peter]
+Exception in thread "main" java.lang.NullPointerException
+  at java.base/java.util.Objects.requireNonNull(Objects.java:221)
+  at java.base/java.util.Optional.<init>(Optional.java:107)
+  at java.base/java.util.Optional.of(Optional.java:120)
+  at JavaSeExamples/com.javabydeveloper.core8.optional.OptionalOfDemo.main(OptionalOfDemo.java:12)
+
+
+Optional.ofNullable
+
+public class OptionalOfNullableDemo {
+  public static void main(String[] args) {
+    /*
+     * ofNullable() - Returns an Optional describing the specified value, if
+     * non-null, otherwise returns an empty Optional.
+     */
+    /*----------------------------------------------------------*/
+    Optional nonEmptyOptional = Optional.ofNullable("Peter Milanovich");
+    Optional emptyOptional = Optional.ofNullable(null);
+    System.out.println(nonEmptyOptional);// Optional[Peter Milanovich]
+    System.out.println(emptyOptional);// Optional.empty
+  }
+}
+Output :
+
+Optional[Peter Milanovich]
+Optional.empty
+
+
+Optional.isPresent
+public class OptionalIsPresesntDemo {
+  public static void main(String[] args) {
+    //isPresent() - returns true if value Present otherwise false
+        /*----------------------------------------------------------*/
+        Optional nonEmptyOptional = Optional.of("Peter Milanovich");
+        Optional emptyOptional = Optional.empty();
+        
+        System.out.println(emptyOptional.isPresent());//false
+        System.out.println(nonEmptyOptional.isPresent());//true
+  }
+}
+Output :
+
+false
+true
+
+
+Optional.ifPresent
+public class OptionalIfPresesntDemo {
+  public static void main(String[] args) {
+    Optional<String> nonEmptyOptional = Optional.of("Peter Milanovich");
+        Optional<String> emptyOptional = Optional.empty();
+        
+        // ifPresent() - if value present invoke specified Consumer
+        /*----------------------------------------------------------*/
+        Consumer<String> consumer = s -> System.out.println(s);
+        nonEmptyOptional.ifPresent(consumer);//Peter
+        emptyOptional.ifPresent(consumer);//never invoke consumer
+  }
+}
+Output :
+
+Peter Milanovich
+
+
+Optional.filter
+public class OptionalFilterDemo {
+  public static void main(String[] args) {
+    Optional<String> nonEmptyOptional = Optional.of("Peter Milanovich");
+        Optional<String> emptyOptional = Optional.empty();
+        
+        /* filter() - If a value is present, and value matches the given predicate, 
+         return an Optional otherwise return an empty Optional. */
+        /*----------------------------------------------------------*/
+        Predicate<String> predicate = s -> s.contains("Milanovich");
+        System.out.println(nonEmptyOptional.filter(predicate));//Optional[Peter Milanovich]
+        System.out.println(nonEmptyOptional.filter(s -> s.equals("Peter")));//Optional.empty
+        System.out.println(emptyOptional.filter(predicate));//Optional.empty
+        System.out.println(nonEmptyOptional.filter(s -> s.startsWith("P")));//Optional[Peter Milanovich]
+  }
+}
+Output :
+
+Optional[Peter Milanovich]
+Optional.empty
+Optional.empty
+Optional[Peter Milanovich]
+
+
+Optional.map
+public class OptionalMapDemo {
+  public static void main(String[] args) {
+    Optional<String> nonEmptyOptional = Optional.of("Peter Milanovich");
+    Optional<String> emptyOptional = Optional.empty();
+    /*
+     * map() - If a value is present, apply the provided mapping function to it, and
+     * if the result is non-null, return an Optional describing the result.
+     * Otherwise return an empty Optional.
+     */
+    /*----------------------------------------------------------*/
+    Function<String, String> function = s -> s.substring(0, 0).length() == 0 ? null : s;
+    
+    System.out.println(nonEmptyOptional.map(function));// Optional.empty
+    System.out.println(nonEmptyOptional.map(String::toLowerCase));// Optional[peter milanovich]
+    System.out.println(emptyOptional.map(function));// Optional.empty
+  }
+}
+Output :
+
+Optional.empty
+Optional[peter milanovich]
+Optional.empty
+
+
+Optional.flatMap
+public class OptionalFlatMapDemo {
+  public static void main(String[] args) {
+    /* 
+     * flatMap() - This method is similar to map(Function),
+         * but the provided mapper is one whose result is already an Optional, and if invoked,
+         * flatMap does not wrap it with an additional Optional.
+         * */
+        /*----------------------------------------------------------*/
+        Optional<Optional> optionalContainer = Optional.of(Optional.of("Peter Milanovich"));
+        Optional<Optional> emptyOptionalContainer = Optional.of(Optional.of("Peter Milanovich"));
+        
+        Function<String, String> function = s -> s.substring(0, 0).length() == 0 ? null : s;
+        Function<String, String> function2 = s -> s.substring(0, 5);
+        
+        System.out.println(optionalContainer.map(optional -> optional.map(function2)));//Optional[Optional[Peter]]
+        System.out.println(optionalContainer.flatMap(optional -> optional.map(function2)));//Optional[Peter]
+        System.out.println(emptyOptionalContainer.flatMap(optional -> optional.map(function)));//Optional.empty
+  }
+}
+Output :
+
+Optional[Optional[Peter]]
+Optional[Peter]
+Optional.empty
+
+
+Optional.orElse
+public class OptionalOrElseDemo {
+  public static void main(String[] args) {
+    Optional<String> nonEmptyOptional = Optional.of("Peter Milanovich");
+        Optional<String> emptyOptional = Optional.empty();
+        
+        // orElse() - Return the value if present, otherwise return other.
+        /*----------------------------------------------------------*/
+        System.out.println(nonEmptyOptional.orElse("Gerhard Gogoush"));//Peter Milanovich
+        System.out.println(emptyOptional.orElse("Gerhard Gogoush"));//Gerhard Gogoush
+  }
+}
+Output :
+
+Peter Milanovich
+Gerhard Gogoush
+3.10.  Optional.orElseGet
+public class OptionalOrElseGetDemo {
+  public static void main(String[] args) {
+    Optional<String> nonEmptyOptional = Optional.of("Peter Milanovich");
+        Optional<String> emptyOptional = Optional.empty();
+        
+        /* orElseGet - Return the value if present, otherwise invoke other 
+        and return the result of that invocation.*/
+        /*----------------------------------------------------------*/
+        Supplier<String> supplier = () -> "Gerhard Gogoush";
+        
+        System.out.println(nonEmptyOptional.orElseGet(supplier));//Peter Milanovich
+        System.out.println(emptyOptional.orElseGet(supplier));//Gerhard Gogoush
+  }
+}
+Output :
+
+Peter Milanovich
+Gerhard Gogoush
+
+
+Optional.orElseThrow
+public class OptionalOrElseThrowDemo {
+  public static void main(String[] args) {
+    Optional<String> nonEmptyOptional = Optional.of("Peter Milanovich");
+        Optional<String> emptyOptional = Optional.empty();
+        
+        // orElseThrow() - Return the contained value, if present, otherwise 
+        //throw an exception to be created by the provided supplier.
+        /*----------------------------------------------------------*/
+        System.out.println(nonEmptyOptional.orElseThrow(NullPointerException::new));//Peter Milanovich
+        System.out.println(emptyOptional.orElseThrow(NullPointerException::new));//NullPointerException
+  }
+}
+Output :
+
+Peter Milanovich
+Exception in thread "main" java.lang.NullPointerException
+  at java.base/java.util.Optional.orElseThrow(Optional.java:408)
+  at JavaSeExamples/com.javabydeveloper.core8.optional.OptionalOrElseThrowDemo.main(OptionalOrElseThrowDemo.java:15)
+
+
+
+Java 8 Streams
+	Another significant change introduced Java 8 Streams API, which provides a mechanism for processing a set of data 
+	in various ways that can include filtering, transformation, or any other way that may be useful to an application.
+
+Streams API in Java 8 supports a different type of iteration where we define the set of items to be processed, 
+the operation(s) to be performed on each item, and where the output of those operations is to be stored.
+
+Stream API Example
+In this example, items is collection of String values and we want to remove the entries that begin with some prefix text.
+
+-------------------------------------------------------------------------
+Bank account table
+calculate sum of amount
+retrive name starts with "S"
+retrive bank account amount> 10000
+--------------------------------------------------------------------------
+
+
+List<String> items = ...; //Initialize the list
+ 
+String prefix = "str";
+ 
+List<String> filteredList = items.stream()
+          .filter(e -> (!e.startsWith(prefix)))
+          .collect(Collectors.toList());
+Here items.stream() indicates that we wish to have the data in the items collection process using the Streams API.
+
+
+
+
+New date-time API
+	https://www.geeksforgeeks.org/new-date-time-api-java8/
+	New date-time API is introduced in Java 8 to overcome the following drawbacks of old date-time API : 
+
+Not thread safe : Unlike old java.util.Date which is not thread safe the new date-time API is immutable and
+ doesn’t have setter methods.
+
+Less operations : In old API there are only few date operations but the new API provides us with many date operations.
+
+Java 8 under the package java.time introduced a new date-time API, most important classes among them are :  
+
+Local : Simplified date-time API with no complexity of timezone handling.
+Zoned : Specialized date-time API to deal with various timezones.
+LocalDate/LocatTime and LocalDateTime API : Use it when time zones are NOT required.
+
+
+// Java code for LocalDate
+// / LocalTime Function
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+
+public class Date {
+
+public static void LocalDateTimeApi()
+{
+	// the current date
+	LocalDate date = LocalDate.now();
+	System.out.println("the current date is "+date);
+
+
+	// the current time
+	LocalTime time = LocalTime.now();
+	System.out.println("the current time is "+ time);
+	
+
+	// will give us the current time and date
+	LocalDateTime current = LocalDateTime.now();
+	System.out.println("current date and time : "+ current);
+
+
+	// to print in a particular format
+	DateTimeFormatter format =
+	DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+
+	String formatedDateTime = current.format(format);
+	
+	System.out.println("in formatted manner "+ formatedDateTime);
+
+
+	// printing months days and seconds
+	Month month = current.getMonth();
+	int day = current.getDayOfMonth();
+	int seconds = current.getSecond();
+	System.out.println("Month : "+month+" day : "+ day+" seconds : "+seconds);
+
+	// printing some specified date
+	LocalDate date2 = LocalDate.of(1950,1,26);
+	System.out.println("the republic day :"+date2);
+
+	// printing date with current time.
+	LocalDateTime specificDate =
+		current.withDayOfMonth(24).withYear(2016);
+
+	System.out.println("specific date with "+
+					"current time : "+specificDate);
+}
+
+	// Driver code
+	public static void main(String[] args)
+	{
+		LocalDateTimeApi();
+	}
+}
